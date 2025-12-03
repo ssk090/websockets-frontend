@@ -1,31 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import "./App.css";
+import { useSocket } from "./hooks/useSocket";
 
 function App() {
-  const socketRef = useRef<WebSocket | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const { send } = useSocket("ws://localhost:8080", (e: MessageEvent) => {
+    alert(e.data);
+  });
+
   function sendMessage() {
-    const ws = socketRef.current;
-    if (!ws) return;
-
     const message = inputRef.current?.value ?? "";
-
-    ws.send(message);
+    send(message);
   }
-
-  useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080");
-    socketRef.current = ws;
-
-    ws.onmessage = (e: MessageEvent) => {
-      alert(e.data);
-    };
-
-    return () => {
-      socketRef.current = null;
-    };
-  }, []);
 
   return (
     <>
