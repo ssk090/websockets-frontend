@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 type MessageHandler = (e: MessageEvent) => void;
 
@@ -28,9 +28,9 @@ export function useSocket(url: string, onMessage?: MessageHandler) {
     };
   }, [url]);
 
-  const send = (message: string) => {
+  const send = useCallback((message: string) => {
     socketRef.current?.send(message);
-  };
+  }, []);
 
   return { send, socketRef } as const;
 }
